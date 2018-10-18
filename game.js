@@ -31,6 +31,7 @@ class Game {
     this.height = 460;
     this.width = 640;
     this.score = 0;
+    this.lives = 5;
   }
 
   start() {
@@ -44,10 +45,12 @@ class Game {
     })
     fill(255);
     text(`Score: ${this.score}`, this.width - 75, 15);
+    text(`Lives: ${this.lives}`, this.width - 75, 30);
   }
 
   update() {
     this.moveBeats();
+    this.checkFails();
     if(this.isHappeningRandomEvent(this.prob)) {
       this.createBeat();
     }
@@ -92,6 +95,27 @@ class Game {
     this.speed += 0.1;
     this.prob += 0.001;
   }
+
+  checkFails() {
+    this.beats.forEach((beat) => {
+      if(beat.y > this.height) {
+        this.beats.splice(this.beats.indexOf(beat), 1);
+        this.lives--;
+      }
+    })
+  }
+
+  isGameOver() {
+    if(this.lives > 0) {
+      return false;
+    }
+    return true;
+  }
+
+  youLose() {
+    background(0, 0, 0);
+    text(`Your final score is ${this.score}. Try again!`, this.width / 2 - 100, this.height / 2 - 5) 
+  }
 }
 
 let game = new Game();
@@ -101,8 +125,12 @@ function setup() {
 }
 
 function draw() {
-  game.render();
-  game.update();
+  if(game.isGameOver()) {
+    game.youLose();
+  } else {
+    game.render();
+    game.update();
+  }
 }
 
 function mousePressed() {

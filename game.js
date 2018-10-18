@@ -16,7 +16,7 @@ class Beat {
   }
 
   isHit(coordinates) {
-    if(coordinates[0] > this.x && coordinates[0] < this.x + this.size && coordinates[1] > this.y && coordinates[1] < this.y + this.size) {
+    if(coordinates[0] > this.x && coordinates[0] < this.x + this.size && coordinates[1] > this.y - 5 && coordinates[1] < this.y + this.size) {
       return true;
     }
     return false;
@@ -26,7 +26,7 @@ class Beat {
 class Game {
   constructor() {
     this.beats = [];
-    this.speed = 1;
+    this.speed = 0.5;
     this.prob = 0.01;
     this.height = 460;
     this.width = 640;
@@ -49,8 +49,10 @@ class Game {
   update() {
     this.moveBeats();
     if(this.isHappeningRandomEvent(this.prob)) {
-      console.log("random");
       this.createBeat();
+    }
+    if(this.isHappeningRandomEvent(0.005)) {
+      this.levelUp();
     }
   }
 
@@ -84,6 +86,11 @@ class Game {
     let beatColor = [this.getRandom(50, 255), this.getRandom(50, 255), this.getRandom(50, 255)]
     let beat = new Beat(beatColor, this.getRandom(10, this.width - 40));
     this.beats.push(beat);
+  }
+
+  levelUp() {
+    this.speed += 0.1;
+    this.prob += 0.001;
   }
 }
 

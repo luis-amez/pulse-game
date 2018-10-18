@@ -8,11 +8,18 @@ class Beat {
 
   draw() {
     fill(...this.color) ;
-    ellipse(this.x, this.y, this.size, this.size);
+    rect(this.x, this.y, this.size, this.size);
   }
 
   advance(speed) {
     this.y += speed;
+  }
+
+  isHit(coordinates) {
+    if(coordinates[0] > this.x && coordinates[0] < this.x + this.size && coordinates[1] > this.y && coordinates[1] < this.y + this.size) {
+      return true;
+    }
+    return false;
   }
 }
 
@@ -36,8 +43,20 @@ class Game {
   }
 
   update() {
+    this.moveBeats();
+  }
+
+  moveBeats() {
     this.beats.forEach((beat) => {
       beat.advance(this.speed);
+    })
+  }
+
+  checkHits(x, y) {
+    this.beats.forEach((beat) => {
+      if(beat.isHit([x, y])) {
+        this.beats.splice(this.beats.indexOf(beat), 1);
+      }
     })
   }
 }
@@ -53,17 +72,6 @@ function draw() {
   game.update();
 }
 
-// function setup() {
-//   createCanvas(400, 400)
-//   background(0, 0, 0)
-// }
-
-// function draw() {
-//   if (mouseIsPressed) {
-//     fill(255, 0, 0)
-//   } else {
-//     fill(0, 255, 0)
-//   }
-
-//   ellipse(mouseX, mouseY, 30, 30)
-// }
+function mousePressed() {
+  game.checkHits(mouseX, mouseY);
+}

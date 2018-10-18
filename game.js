@@ -27,12 +27,14 @@ class Game {
   constructor() {
     this.beats = [];
     this.speed = 1;
+    this.prob = 0.01;
+    this.height = 460;
+    this.width = 640;
+    this.score = 0;
   }
 
   start() {
-    createCanvas(400, 400);
-    let beat = new Beat([255, 0, 0], 30);
-    this.beats.push(beat);
+    createCanvas(this.width, this.height);
   }
 
   render() {
@@ -40,10 +42,16 @@ class Game {
     this.beats.forEach((beat) => {
       beat.draw();
     })
+    fill(255);
+    text(`Score: ${this.score}`, this.width - 75, 15);
   }
 
   update() {
     this.moveBeats();
+    if(this.isHappeningRandomEvent(this.prob)) {
+      console.log("random");
+      this.createBeat();
+    }
   }
 
   moveBeats() {
@@ -56,8 +64,26 @@ class Game {
     this.beats.forEach((beat) => {
       if(beat.isHit([x, y])) {
         this.beats.splice(this.beats.indexOf(beat), 1);
+        this.score++;
       }
     })
+  }
+
+  isHappeningRandomEvent(prob) {
+    if(Math.random() < prob) {
+      return true;
+    }
+    return false;
+  }
+
+  getRandom(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  createBeat() {
+    let beatColor = [this.getRandom(50, 255), this.getRandom(50, 255), this.getRandom(50, 255)]
+    let beat = new Beat(beatColor, this.getRandom(10, this.width - 40));
+    this.beats.push(beat);
   }
 }
 
